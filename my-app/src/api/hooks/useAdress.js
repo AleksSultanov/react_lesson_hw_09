@@ -1,43 +1,39 @@
-import { useState } from 'react';
-import { adressService } from '../services/adressinfo';
+import { useState } from "react";
+import { adressService } from "../services/adressinfo";
 
 export function useAdress() {
-  const [info, setInfo] = useState([]);
-  const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+    const [info, setInfo] = useState([]);
+    const [isLoading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-  async function getAdressInfoRequest(adress) {
+    async function getAdressInfoRequest(adress) {
+        if (adress.trim() !== "") {
+            setLoading(true);
 
-    if (adress.trim() !== ''){
-      setLoading(true);
+            try {
+                const infoData = await adressService.getInfo(adress);
 
-      try {
-        const infoData = await adressService.getInfo(adress);
-        
-  
-        setTimeout(() => {
-          setInfo(infoData);
-          setLoading(false);
-          infoData.map((items, index) => {
-            console.log("index",index);
-            Object.keys(items).map((key) => {
-              console.log("index key",key);
-            })
-          })    
+                setTimeout(() => {
+                    setInfo(infoData);
+                    setLoading(false);
 
-        }, 1000);
-      } catch (error) {
-        setError(error);
-      }
-    }  
-  
+                    infoData.map((items, index) => {
+                        console.log("index", index);
+                        Object.keys(items).map((key) => {
+                            console.log("index key", key);
+                        });
+                    });
+                }, 1000);
+            } catch (error) {
+                setError(error);
+            }
+        }
     }
 
-  return {
-    info,
-    error,
-    isLoading,
-    getAdressInfoRequest,
-  }
-  
+    return {
+        info,
+        error,
+        isLoading,
+        getAdressInfoRequest,
+    };
 }
